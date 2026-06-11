@@ -3,7 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-<title>Soumya Mishra's Portfolio</title>
+<link rel="icon" type="image/png" href="ribbon.png">
+<title>Hire Me!</title>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400&family=DM+Sans:wght@300;400;500;600&family=Caveat:wght@400;600;700&display=swap" rel="stylesheet">
 <style>
   :root {
@@ -163,18 +164,65 @@
   }
 
   /* ── FLOATING COLLECTIBLES ── */
-  .collectible {
-    position: fixed; z-index: 996;
-    cursor: grab; user-select: none;
-    font-size: 1.6rem;
-    filter: drop-shadow(2px 4px 8px rgba(0,0,0,0.15));
-    transition: filter 0.2s, transform 0.15s;
-    touch-action: none;
-  }
-  .collectible:hover { filter: drop-shadow(2px 8px 14px rgba(0,0,0,0.28)) brightness(1.15); }
-  .collectible:active { cursor: grabbing; transform: scale(1.2); }
-  .collectible.collected { opacity: 0; pointer-events: none; transition: opacity 0.4s; }
-  @media (max-width: 768px) { .collectible { font-size: 1.3rem; } }
+  .collectible{
+    position:fixed;
+    z-index:996;
+    cursor:grab;
+    user-select:none;
+    touch-action:none;
+    transition:transform .25s ease;
+    animation:floatSticker 5s ease-in-out infinite;
+}
+
+.collectible img{
+    width:75px;
+    height:75px;
+    object-fit:contain;
+    pointer-events:none;
+
+    filter:
+      drop-shadow(0 8px 12px rgba(0,0,0,.25));
+}
+
+.collectible:hover{
+    transform:scale(1.15);
+}
+
+.collectible:active{
+    transform:scale(1.25);
+}
+
+.collectible.collected{
+    opacity:0;
+    pointer-events:none;
+    transition:opacity .4s ease;
+}
+
+@keyframes floatSticker{
+    0%,100%{
+        transform:translateY(0px);
+    }
+
+    50%{
+        transform:translateY(-12px);
+    }
+}
+
+.collectible:nth-child(1){animation-delay:0s;}
+.collectible:nth-child(2){animation-delay:1s;}
+.collectible:nth-child(3){animation-delay:2s;}
+.collectible:nth-child(4){animation-delay:3s;}
+.collectible:nth-child(5){animation-delay:4s;}
+.collectible:nth-child(6){animation-delay:5s;}
+
+@media (max-width:768px){
+
+    .collectible img{
+        width:58px;
+        height:58px;
+    }
+
+}
 
   /* ── SECTIONS ── */
   section { position: relative; z-index: 1; }
@@ -433,29 +481,99 @@
   .vibe-label { font-weight: 600; font-size: 1rem; color: var(--soft-navy); }
   @media (max-width: 480px) { #vibe { padding: 50px 5vw; } .vibe-grid { grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); } }
 
+/* ── SECRET CAT FULLSCREEN OVERLAY ── */
+  #secret-cat-overlay {
+    position: fixed; inset: 0; z-index: 99999;
+    background: rgba(0,0,0,0);
+    display: flex; align-items: center; justify-content: center;
+    transition: background 0.6s ease;
+    pointer-events: none;
+  }
+  #secret-cat-overlay.sco-visible {
+    background: rgba(0,0,0,0.88);
+    pointer-events: auto;
+  }
+  .sco-inner {
+    display: flex; flex-direction: column; align-items: center; gap: 24px;
+    opacity: 0; transform: scale(0.5);
+    transition: opacity 0.5s ease, transform 0.5s cubic-bezier(.34,1.56,.64,1);
+    text-align: center; padding: 24px;
+  }
+  #secret-cat-overlay.sco-visible .sco-inner {
+    opacity: 1; transform: scale(1);
+  }
+  .sco-cat-img {
+    width: min(320px, 70vw);
+    height: auto;
+    border-radius: 24px;
+    animation: sco-glow-pulse 2s ease-in-out infinite;
+  }
+  @keyframes sco-glow-pulse {
+    0%,100% { filter: drop-shadow(0 0 20px rgba(255,180,220,0.8)) drop-shadow(0 0 50px rgba(255,120,190,0.5)) drop-shadow(0 0 80px rgba(200,80,160,0.3)); }
+    50%      { filter: drop-shadow(0 0 35px rgba(255,220,240,1))   drop-shadow(0 0 80px rgba(255,160,210,0.9)) drop-shadow(0 0 120px rgba(220,100,180,0.6)); }
+  }
+  .sco-line {
+    font-family: 'Caveat', cursive;
+    font-size: clamp(1.4rem, 4.5vw, 2rem);
+    color: #ffe0f0;
+    letter-spacing: 0.03em;
+    min-height: 2.2rem;
+    line-height: 1.4;
+  }
+  .sco-line::after {
+    content: '|';
+    animation: sco-blink 0.75s step-end infinite;
+    color: #ffb3d9;
+    margin-left: 2px;
+  }
+  .sco-line-2 {
+    font-size: clamp(1.2rem, 4vw, 1.7rem);
+    color: #ffb3d9;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
+  @keyframes sco-blink { 0%,100%{opacity:1} 50%{opacity:0} }
+
   /* ── EASTER EGG TOAST ── */
   
 #egg-toast {
-    position: fixed; bottom: 90px; left: 50%;
+    position: fixed;
+    bottom: 90px;
+    left: 50%;
     transform: translateX(-50%);
-    background: var(--ink); color: white;
-    padding: 12px 22px; border-radius: 50px;
-    font-size: 0.85rem; font-weight: 500;
+
+    background: var(--ink);
+    color: white;
+
+    padding: 18px;
+    border-radius: 18px;
+
     z-index: 9999;
     opacity: 0;
     visibility: hidden;
+
     transition: opacity 0.35s ease, visibility 0.35s ease;
-    box-shadow: 0 8px 30px rgba(0,0,0,0.2);
+
+    box-shadow: 0 8px 30px rgba(0,0,0,0.25);
     pointer-events: none;
+
     border-left: 4px solid var(--gold);
-    max-width: calc(100vw - 40px);
-    text-align: center;
+
+    width: min(420px, 90vw);
+    max-width: 420px;
+
+    text-align: left;
 }
+
 #egg-toast.show {
     opacity: 1;
     visibility: visible;
-}
 
+
+}
+#egg-toast img{
+    box-shadow: 0 4px 12px rgba(0,0,0,.25);
+}
 
 /* ── SCROLL REVEAL ── */
   .reveal { opacity: 0; transform: translateY(30px); transition: opacity 0.6s ease, transform 0.6s ease; }
@@ -899,13 +1017,50 @@ body:not(.dark-theme){
   <div class="hud-claw" id="hud-claw" title="Locked — collect 27 pts to unlock!">🍋</div>
 </div>
 
+
 <!-- ══ FLOATING COLLECTIBLES ══ -->
-<div class="collectible" id="col-coffee" data-name="Soumi's secret weapon: Coffee!" style="top:32%;left:3%">☕</div>
-<div class="collectible" id="col-duck" data-name="You found Soumi's rubber duck debugger! 🦆" style="top:62%;right:2%">🦆</div>
-<div class="collectible" id="col-rocket" data-name="Legendary Explorer — you found the rocket! 🚀" style="top:22%;right:4%">🚀</div>
-<div class="collectible" id="col-bulb" data-name="You discovered the idea engine! 💡" style="top:77%;left:2%">💡</div>
-<div class="collectible" id="col-cat" data-name="You found Soumi's spirit animal! 🐱" style="top:47%;right:3%">🐱</div>
-<div class="collectible" id="col-star" data-name="A shooting star — wish for a dream job! ⭐" style="top:15%;left:8%">⭐</div>
+
+<div class="collectible"
+     id="col-butterfly"
+     data-name="You found a magical butterfly! 🦋"
+     style="top:18%;left:4%">
+     <img src="butterflu.png" alt="Butterfly">
+</div>
+
+<div class="collectible"
+     id="col-cherry"
+     data-name="Sweet cherries discovered! 🍒"
+     style="top:65%;right:3%">
+     <img src="cherry.png" alt="Cherry">
+</div>
+
+<div class="collectible"
+     id="col-flower"
+     data-name="A sparkling flower blooms! ✨"
+     style="top:78%;left:2%">
+     <img src="flower.png" alt="Flower">
+</div>
+
+<div class="collectible"
+     id="col-cat"
+     data-name="You found Soumi's vacation cat 😎"
+     style="top:42%;right:2%">
+     <img src="vaccat.png" alt="Cat">
+</div>
+
+<div class="collectible"
+     id="col-ribbon"
+     data-name="Pretty ribbon unlocked 🎀"
+     style="top:8%;left:12%">
+     <img src="ribbon.png" alt="Ribbon">
+</div>
+
+<div class="collectible"
+     id="col-shell"
+     data-name="A magical seashell from the moonlit shore 🐚"
+     style="top:25%;right:6%">
+     <img src="shell.png" alt="Shell">
+</div>
 
 <!-- ══ UNLOCK BLAST ══ -->
 <div id="unlock-blast">
@@ -1256,6 +1411,15 @@ body:not(.dark-theme){
   </div>
 </div>
 
+<!-- ══ SECRET CAT OVERLAY ══ -->
+<div id="secret-cat-overlay" style="display:none">
+  <div class="sco-inner">
+    <img src="secret-cat.png" alt="Secret Cat" class="sco-cat-img">
+    <p class="sco-line" id="sco-line1"></p>
+    <p class="sco-line sco-line-2" id="sco-line2"></p>
+  </div>
+</div>
+
 <!-- ══ PRIZE REVEAL OVERLAY ══ -->
 <div id="prize-overlay">
   <div class="prize-card">
@@ -1365,6 +1529,55 @@ function showEgg(msg){
   toast.classList.add('show');
   clearTimeout(toastT);
   toastT=setTimeout(()=>toast.classList.remove('show'),3200);
+}
+
+function showSecretCat() {
+  const overlay = document.getElementById('secret-cat-overlay');
+  const line1El = document.getElementById('sco-line1');
+  const line2El = document.getElementById('sco-line2');
+
+  // Reset text
+  line1El.textContent = '';
+  line2El.textContent = '';
+  line1El.style.opacity = '1';
+  line2El.style.opacity = '0';
+
+  // Show overlay
+  overlay.style.display = 'flex';
+  requestAnimationFrame(() => requestAnimationFrame(() => {
+    overlay.classList.add('sco-visible');
+  }));
+
+  const msg1 = 'you were not supposed to find this cat...';
+  const msg2 = 'it thinks you are cute ♡';
+
+  // Type line 1 after cat fades in (600ms)
+  let i = 0;
+  function typeL1() {
+    if (i < msg1.length) {
+      line1El.textContent += msg1[i++];
+      setTimeout(typeL1, 42);
+    } else {
+      // Start line 2
+      line2El.style.opacity = '1';
+      let j = 0;
+      function typeL2() {
+        if (j < msg2.length) {
+          line2El.textContent += msg2[j++];
+          setTimeout(typeL2, 48);
+        }
+      }
+      setTimeout(typeL2, 300);
+    }
+  }
+  setTimeout(typeL1, 700);
+
+  // Auto dismiss after 6s
+  clearTimeout(window._scTimer);
+  window._scTimer = setTimeout(() => {
+    overlay.classList.remove('sco-visible');
+    setTimeout(() => { overlay.style.display = 'none'; }, 700);
+  }, 6500);
 }
 
 // ══════════════════════════════════
@@ -1695,13 +1908,20 @@ function closePrize() {
   document.body.style.overflow = '';
 }
 
+
+
 // ══════════════════════════════════
 // EASTER EGGS
 // ══════════════════════════════════
 let keys=[];
+
 document.addEventListener('keydown',e=>{
-  keys.push(e.key); keys=keys.slice(-5);
-  if(keys.join('').toLowerCase().includes('soumi')) showEgg('🌟 You typed Soumi! Legendary status unlocked!');
+  keys.push(e.key);
+  keys = keys.slice(-5);
+
+  if(keys.join('').toLowerCase().includes('soumi')){
+    showSecretCat();
+  }
 });
 
 // Scroll sparkle
