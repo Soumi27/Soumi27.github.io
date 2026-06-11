@@ -8,20 +8,19 @@
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400&family=DM+Sans:wght@300;400;500;600&family=Caveat:wght@400;600;700&display=swap" rel="stylesheet">
 <style>
   :root {
-    --cream: #FDF6EC;
-    --warm-white: #FEFAF4;
-    --sage: #8BAF8B;
-    --dusty-rose: #D4847A;
-    --terracotta: #C86B50;
-    --gold: #C9A84C;
-    --deep-teal: #2D5F5D;
-    --soft-navy: #2E3A59;
-    --lavender: #B8A9C9;
-    --peach: #F2C4A0;
-    --ink: #1A1A2E;
-    --muted: #6B7280;
-    --card-shadow: 0 8px 40px rgba(44,58,89,0.12);
-  }
+  --cream: #FFF0F5;
+  --warm-white: #FEFAF4;
+  --sage: #8BAF8B;
+  --dusty-rose: #D4847A;
+  --terracotta: #C86B50;
+  --gold: #C9A84C;
+  --deep-teal: #2D5F5D;
+  --soft-navy: #2E3A59;
+  --lavender: #B8A9C9;
+  --peach: #F2C4A0;
+  --ink: #1A1A2E;
+  --muted: #6B7280;
+}
   * { margin: 0; padding: 0; box-sizing: border-box; }
   html { scroll-behavior: smooth; }
   body {
@@ -60,6 +59,66 @@
     #cursor.hovering { width: 22px; height: 22px; background: var(--gold); }
     #claw-overlay, #prize-overlay { cursor: none; }
   }
+
+  #sticker-tip{
+  position:fixed;
+  top:90px;
+  left:50%;
+  transform:translateX(-50%);
+
+  display:flex;
+  align-items:center;
+  gap:12px;
+
+  background:rgba(15,20,35,.95);
+  color:white;
+
+  padding:14px 18px;
+  border-radius:18px;
+
+  z-index:9998;
+
+  box-shadow:0 8px 25px rgba(0,0,0,.25);
+
+  max-width:420px;
+  width:min(90vw,420px);
+
+  animation:tipFadeIn .5s ease;
+}
+
+.tip-cat{
+  width:70px;
+  height:auto;
+  flex-shrink:0;
+
+  filter:
+    drop-shadow(0 4px 10px rgba(0,0,0,.25));
+}
+
+.tip-text{
+  font-size:.9rem;
+  line-height:1.5;
+  font-weight:600;
+}
+
+#sticker-tip.hide{
+  opacity:0;
+  visibility:hidden;
+  transition:.4s;
+}
+
+@media (max-width:600px){
+
+  #sticker-tip{
+    flex-direction:column;
+    text-align:center;
+    padding:16px;
+  }
+
+  .tip-cat{
+    width:90px;
+  }
+}
 
   /* ── PARTICLE CANVAS ── */
   #particle-canvas {
@@ -697,27 +756,61 @@
     z-index: 1;
   }
 
-  .pit-sticker {
-    position: absolute; font-size: 2rem;
-    cursor: none; user-select: none;
-    transition: transform 0.2s, opacity 0.3s;
-    z-index: 3;
-    filter: drop-shadow(0 2px 8px rgba(0,0,0,0.5));
-    animation: sticker-idle 3s ease-in-out infinite;
-  }
-  .pit-sticker.rare {
-    filter: drop-shadow(0 0 10px rgba(201,168,76,0.8));
-    animation: sticker-rare 2s ease-in-out infinite;
-  }
+  .pit-sticker{
+    position:absolute;
+    width:60px;
+    height:60px;
+
+    cursor:none;
+    user-select:none;
+
+    transition:
+      transform .2s,
+      opacity .3s;
+
+    z-index:3;
+
+    animation:
+      sticker-idle 3s ease-in-out infinite;
+    }
+  .pit-ball{
+    width:100%;
+    height:100%;
+    object-fit:contain;
+
+    pointer-events:none;
+
+    filter:
+      drop-shadow(0 4px 10px rgba(0,0,0,.4))
+      drop-shadow(0 0 10px rgba(255,255,255,.15));
+}  
+  .pit-sticker.rare .pit-ball{
+    filter:
+      drop-shadow(0 0 12px rgba(255,215,0,.7))
+      drop-shadow(0 0 22px rgba(255,215,0,.45));
+}
   .pit-sticker.grabbed { opacity: 0; transform: scale(0.3) translateY(-30px); }
   @keyframes sticker-idle {
     0%,100% { transform: translateY(0) rotate(var(--rot, 0deg)); }
     50% { transform: translateY(-4px) rotate(var(--rot, 0deg)); }
   }
-  @keyframes sticker-rare {
-    0%,100% { transform: translateY(0) scale(1) rotate(var(--rot, 0deg)); filter: drop-shadow(0 0 8px rgba(201,168,76,0.9)); }
-    50% { transform: translateY(-6px) scale(1.05) rotate(var(--rot, 0deg)); filter: drop-shadow(0 0 16px rgba(201,168,76,1)); }
+  .pit-sticker.rare{
+    animation:
+      sticker-rare 2s ease-in-out infinite;
+}
+@keyframes sticker-rare {
+  0%,100%{
+    transform:translateY(0)
+              scale(1)
+              rotate(var(--rot,0deg));
   }
+
+  50%{
+    transform:translateY(-6px)
+              scale(1.08)
+              rotate(var(--rot,0deg));
+  }
+}
 
   /* Bottom controls */
   .claw-controls {
@@ -751,68 +844,244 @@
   /* ── PRIZE REVEAL CARD ── */
   #prize-overlay {
     position: fixed; inset: 0; z-index: 10001;
-    background: rgba(10,8,26,0.98);
+    background: rgba(6,4,18,0.97);
     display: none; flex-direction: column;
     align-items: center; justify-content: center;
-    padding: 30px;
+    padding: 20px;
+    backdrop-filter: blur(6px);
   }
   #prize-overlay.active { display: flex; }
+
   .prize-card {
-    background: linear-gradient(145deg, #1e1040, #2d1460);
+    background: linear-gradient(160deg, #1a0e42 0%, #2a1268 50%, #1a0e42 100%);
     border: 2px solid var(--gold);
-    border-radius: 24px; padding: 36px 30px;
-    max-width: 380px; width: 100%; text-align: center;
-    box-shadow: 0 0 60px rgba(201,168,76,0.25);
+    border-radius: 32px;
+    padding: 48px 44px 40px;
+    max-width: 520px;
+    width: 100%;
+    text-align: center;
+    box-shadow:
+      0 0 0 1px rgba(201,168,76,0.15),
+      0 0 80px rgba(201,168,76,0.3),
+      0 0 160px rgba(120,60,255,0.15),
+      0 32px 80px rgba(0,0,0,0.6);
     position: relative; overflow: hidden;
+    animation: card-enter 0.5s cubic-bezier(.34,1.56,.64,1) both;
+  }
+  @keyframes card-enter {
+    from { opacity:0; transform: scale(0.85) translateY(24px); }
+    to   { opacity:1; transform: scale(1) translateY(0); }
   }
   .prize-card::before {
     content: "";
     position: absolute; inset: 0;
-    background: radial-gradient(ellipse at center, rgba(201,168,76,0.07) 0%, transparent 70%);
+    background:
+      radial-gradient(ellipse at 50% 0%, rgba(201,168,76,0.12) 0%, transparent 60%),
+      radial-gradient(ellipse at 50% 100%, rgba(120,60,255,0.08) 0%, transparent 60%);
     pointer-events: none;
   }
-  .prize-sticker { font-size: 4.5rem; margin-bottom: 12px; display: block; animation: prize-pop 0.5s cubic-bezier(0.34,1.56,0.64,1) both; }
-  @keyframes prize-pop { from{transform:scale(0) rotate(-20deg)} to{transform:scale(1) rotate(0deg)} }
+  /* Shimmer line at top */
+  .prize-card::after {
+    content: "";
+    position: absolute; top: 0; left: 0; right: 0; height: 2px;
+    background: linear-gradient(90deg, transparent, var(--gold), #fff8, var(--gold), transparent);
+    border-radius: 32px 32px 0 0;
+  }
+
+  /* Ball stage — shown first */
+  .prize-ball-stage {
+    margin-bottom: 10px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 220px;
+  }
+  .prize-ball-stage img {
+    width: min(200px, 52vw);
+    height: min(200px, 52vw);
+    object-fit: contain;
+    filter: drop-shadow(0 0 28px rgba(255,255,255,.3)) drop-shadow(0 8px 20px rgba(0,0,0,.5));
+    animation: prize-pop .65s cubic-bezier(.34,1.56,.64,1);
+    transition: opacity 0.3s ease, transform 0.3s ease;
+  }
+
+  /* Catch label shown below ball before reveal */
+  .prize-catch-label {
+    font-family: 'Caveat', cursive;
+    font-size: 1.15rem;
+    color: rgba(255,255,255,0.55);
+    margin-bottom: 6px;
+    letter-spacing: 0.03em;
+  }
+
+  .prize-sticker {
+    margin-bottom: 10px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 220px;
+  }
+  .prize-sticker img {
+    width: min(200px, 52vw);
+    height: min(200px, 52vw);
+    object-fit: contain;
+    filter: drop-shadow(0 0 28px rgba(255,255,255,.3)) drop-shadow(0 8px 20px rgba(0,0,0,.5));
+    animation: prize-pop .65s cubic-bezier(.34,1.56,.64,1);
+    transition: opacity 0.3s ease, transform 0.3s ease;
+  }
+
+  @keyframes prize-pop {
+    0%   { transform: scale(0) rotate(-15deg); opacity: 0; }
+    60%  { transform: scale(1.12) rotate(4deg); opacity: 1; }
+    100% { transform: scale(1) rotate(0deg); opacity: 1; }
+  }
+
   .prize-rarity {
-    font-size: 0.68rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase;
-    padding: 4px 12px; border-radius: 20px; display: inline-block; margin-bottom: 12px;
+    display: inline-block;
+    font-size: 0.72rem;
+    font-weight: 800;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    padding: 5px 16px;
+    border-radius: 999px;
+    margin-bottom: 12px;
   }
-  .prize-rarity.common { background: rgba(139,175,139,0.2); color: var(--sage); border: 1px solid var(--sage); }
-  .prize-rarity.rare { background: rgba(201,168,76,0.2); color: var(--gold); border: 1px solid var(--gold); }
-  .prize-rarity.legendary { background: rgba(200,107,80,0.2); color: var(--terracotta); border: 1px solid var(--terracotta); animation: rarity-pulse 1.5s ease-in-out infinite; }
-  @keyframes rarity-pulse { 0%,100%{box-shadow:none} 50%{box-shadow:0 0 16px rgba(200,107,80,0.5)} }
-  .prize-name { font-family: 'Playfair Display', serif; font-size: 1.4rem; color: white; margin-bottom: 16px; }
+  .prize-rarity.common   { background: rgba(139,175,139,0.2); color: #8BAF8B; border: 1px solid rgba(139,175,139,0.4); }
+  .prize-rarity.rare     { background: rgba(184,169,201,0.2); color: #c9a8e8; border: 1px solid rgba(184,169,201,0.4); }
+  .prize-rarity.legendary{ background: linear-gradient(135deg,rgba(255,215,0,0.2),rgba(255,179,0,0.2)); color: #ffd700; border: 1px solid rgba(255,215,0,0.5); }
+
+  .prize-name {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.6rem;
+    font-weight: 700;
+    color: #fff;
+    margin-bottom: 16px;
+    letter-spacing: 0.01em;
+  }
+
+  .prize-divider {
+    width: 60px; height: 2px;
+    background: linear-gradient(90deg, transparent, var(--gold), transparent);
+    margin: 0 auto 18px;
+    border-radius: 2px;
+    opacity: 0;
+    transition: opacity 0.4s ease 0.2s;
+  }
+  .prize-divider.visible { opacity: 1; }
+
   .prize-fortune {
-    font-family: 'Caveat', cursive; font-size: 1.15rem;
-    color: rgba(255,255,255,0.85); line-height: 1.6;
-    background: rgba(255,255,255,0.06); border-radius: 14px;
-    padding: 16px; margin-bottom: 22px; border-left: 3px solid var(--gold);
     display: none;
+    font-family: 'Caveat', cursive;
+    font-size: 1.35rem;
+    color: rgba(255,255,255,0.88);
+    line-height: 1.6;
+    padding: 18px 20px;
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 16px;
+    margin-bottom: 24px;
+    position: relative;
   }
-  .prize-fortune.revealed { display: block; animation: fortune-in 0.4s ease both; }
-  @keyframes fortune-in { from{opacity:0;transform:translateY(10px)} to{opacity:1;transform:translateY(0)} }
+  .prize-fortune::before {
+    content: '✨';
+    display: block;
+    font-size: 1.1rem;
+    margin-bottom: 6px;
+  }
+  .prize-fortune.revealed {
+    display: block;
+    animation: fortune-in 0.5s cubic-bezier(.34,1.56,.64,1) both;
+  }
+  @keyframes fortune-in {
+    from { opacity:0; transform: scale(0.9) translateY(12px); }
+    to   { opacity:1; transform: scale(1) translateY(0); }
+  }
+
   .prize-reveal-btn {
-    background: linear-gradient(135deg, var(--gold), var(--terracotta));
-    color: white; border: none; border-radius: 50px;
-    padding: 12px 28px; font-family: 'DM Sans', sans-serif;
-    font-weight: 700; font-size: 0.9rem; cursor: pointer;
-    transition: all 0.2s; margin-bottom: 12px;
+    background: linear-gradient(135deg, #c9a84c, #e8c55a, #c9a84c);
+    background-size: 200% auto;
+    color: #1a0e42;
+    border: none;
+    border-radius: 50px;
+    padding: 15px 40px;
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 800;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: all 0.25s;
+    margin :auto;
+    margin-bottom: 12px ;
     touch-action: manipulation;
+    letter-spacing: 0.04em;
+    box-shadow: 0 4px 24px rgba(201,168,76,0.45), 0 0 0 0 rgba(201,168,76,0.3);
+    animation: btn-pulse 2s ease-in-out infinite;
   }
-  .prize-reveal-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(201,168,76,0.4); }
+  @keyframes btn-pulse {
+    0%,100% { box-shadow: 0 4px 24px rgba(201,168,76,0.45), 0 0 0 0 rgba(201,168,76,0.3); }
+    50%     { box-shadow: 0 4px 24px rgba(201,168,76,0.45), 0 0 0 8px rgba(201,168,76,0); }
+  }
+  .prize-reveal-btn:hover {
+    transform: translateY(-3px) scale(1.04);
+    background-position: right center;
+    box-shadow: 0 8px 32px rgba(201,168,76,0.6);
+    animation: none;
+  }
+
   .prize-back-btn {
-    background: transparent; color: rgba(255,255,255,0.5);
-    border: 1.5px solid rgba(255,255,255,0.15); border-radius: 50px;
-    padding: 10px 24px; font-family: 'DM Sans', sans-serif;
-    font-size: 0.82rem; cursor: pointer; transition: all 0.2s;
-    display: block; margin: 0 auto;
+    background: transparent;
+    color: rgba(255,255,255,0.45);
+    border: 1.5px solid rgba(255,255,255,0.12);
+    border-radius: 50px;
+    padding: 11px 28px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.85rem;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: block;
+    margin: 0 auto;
     touch-action: manipulation;
+    letter-spacing: 0.02em;
   }
-  .prize-back-btn:hover { color: white; border-color: white; }
+  .prize-back-btn:hover {
+    color: white;
+    border-color: rgba(255,255,255,0.5);
+    background: rgba(255,255,255,0.06);
+    transform: translateY(-1px);
+  }
+
+  .legendary-banner {
+    position: absolute;
+    top: 16px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: linear-gradient(135deg, #ffd700, #ffb300);
+    color: #1e1040;
+    padding: 7px 20px;
+    border-radius: 999px;
+    font-size: 0.72rem;
+    font-weight: 900;
+    letter-spacing: 0.14em;
+    animation: legendaryPulse 1.5s infinite;
+    z-index: 10;
+    white-space: nowrap;
+    box-shadow: 0 4px 16px rgba(255,215,0,0.4);
+  }
+  @keyframes legendaryPulse {
+    0%,100% { transform: translateX(-50%) scale(1); }
+    50%     { transform: translateX(-50%) scale(1.06); }
+  }
+
   .stars-bg {
     position: absolute; inset: 0; overflow: hidden; pointer-events: none;
   }
   .star { position: absolute; background: white; border-radius: 50%; opacity: 0; animation: star-twinkle 2s ease-in-out infinite; }
+
+  @media (max-width: 560px) {
+    .prize-card { padding: 36px 24px 32px; border-radius: 24px; }
+    .prize-name { font-size: 1.35rem; }
+    .prize-fortune { font-size: 1.2rem; }
+    .prize-reveal-btn { padding: 13px 30px; font-size: 0.92rem; }
+  }
 
   /* ── UNLOCK ANIMATION ── */
   #unlock-blast {
@@ -1111,7 +1380,15 @@ body:not(.dark-theme){
        <div class="photo-badge photo-badge-1">🌟 Software Developer</div>
       <div class="photo-badge photo-badge-2">☕ Always Learning</div>
   </div>
+
+  <div id="sticker-tip">
+  <img src="secret-cat.png" alt="Cat Helper" class="tip-cat">
+  <div class="tip-text">
+    Psst... I'm hiding a little challenge for you! 🐾 Try clicking or dragging the floating stickers around the page. Collect enough points and something special might unlock... ✨🎮
+  </div>
+</div>
 </section>
+
 
 <!-- ══ SKILLS MARQUEE ══ -->
 <div class="marquee-section">
@@ -1351,7 +1628,7 @@ body:not(.dark-theme){
   <h2 class="section-heading reveal">My Energy ✨</h2>
   <p class="section-sub reveal">Hover to see the dark side 🌙</p>
   <div class="vibe-grid">
-    <div class="vibe-card reveal"><span class="vibe-icon">💻</span><div class="vibe-label">Backend Engineeringt</div></div>
+    <div class="vibe-card reveal"><span class="vibe-icon">💻</span><div class="vibe-label">Backend Engineering</div></div>
     <div class="vibe-card reveal"><span class="vibe-icon">🚀</span><div class="vibe-label">Software Development</div></div>
     <div class="vibe-card reveal"><span class="vibe-icon">📚</span><div class="vibe-label">Always Learning</div></div>
     <div class="vibe-card reveal"><span class="vibe-icon">🎨</span><div class="vibe-label">Creativity</div></div>
@@ -1715,24 +1992,79 @@ function triggerUnlock() {
 // CLAW MACHINE GAME
 // ══════════════════════════════════
 const STICKERS = [
-  {emoji:'☕',name:'Coffee Queen',rarity:'common',fortune:'Your best code is written after the second cup. Keep brewing ideas.'},
-  {emoji:'🐍',name:'Python Whisperer',rarity:'common',fortune:'Readability counts. Beautiful code is its own reward.'},
-  {emoji:'🗄️',name:'SQL Sorcerer',rarity:'rare',fortune:'Every query you write is a question — and data always answers honestly.'},
-  {emoji:'🚀',name:'Launch Mode',rarity:'common',fortune:'Your biggest project is the next one you haven\'t started yet.'},
-  {emoji:'🌟',name:'10.00 SGPA',rarity:'legendary',fortune:'Perfection in a semester is proof of something most people never achieve. Remember this feeling.'},
-  {emoji:'🐱',name:'Debug Cat',rarity:'common',fortune:'When in doubt, step away and come back with fresh eyes — works for bugs and life.'},
-  {emoji:'📊',name:'Data Dreamer',rarity:'rare',fortune:'The story inside messy data is waiting for someone patient enough to tell it. That\'s you.'},
-  {emoji:'💡',name:'Idea Machine',rarity:'common',fortune:'Your ideas are worthwhile. Build the thing. Ship the thing. Iterate.'},
-  {emoji:'🌸',name:'Bloom Sticker',rarity:'rare',fortune:'Growth doesn\'t shout. It just quietly keeps showing up.'},
-  {emoji:'🦆',name:'Rubber Duck',rarity:'legendary',fortune:'Rubber duck debugging is real engineering. Never let anyone tell you otherwise.'},
-  {emoji:'🎓',name:'Scholar Mode',rarity:'rare',fortune:'Learning is the one skill that compounds forever. You\'re already ahead.'},
-  {emoji:'🏆',name:'QueryXplode',rarity:'legendary',fortune:'You won that SQL competition by being exactly who you are. Carry that energy everywhere.'},
-  {emoji:'💻',name:'Night Coder',rarity:'common',fortune:'2am code sessions are proof of passion. Just remember to sleep eventually.'},
-  {emoji:'🌱',name:'Growth Seed',rarity:'common',fortune:'The best time to plant a tree was ten years ago. The second best is right now.'},
-  {emoji:'⚡',name:'JS Lightning',rarity:'rare',fortune:'async/await was invented so developers could breathe. You\'re doing great.'},
-  {emoji:'🎨',name:'Code Artist',rarity:'common',fortune:'Technical skill is the brush. Creativity is the vision. You have both.'},
-  {emoji:'🦋',name:'Metamorphosis',rarity:'legendary',fortune:'Every internship, every project, every late night — it\'s all becoming something beautiful.'},
-  {emoji:'🔮',name:'Fortune Dev',rarity:'rare',fortune:'The future of tech has a seat with your name on it.'},
+
+{
+  ball:'blue-purple-ball.png',
+  reveal:['blue-purple-ball-img1.png','blue-purple-ball-img2.png'],
+  name:'Cosmic Marble',
+  rarity:'rare',
+  fortunes:[
+    'Your future self just high-fived you.',
+    'A great opportunity is quietly approaching.',
+    'Keep building. Someone important will notice.'
+  ]
+},
+
+{
+  ball:'goldengween.png',
+  reveal:['greengoldenimg1.png','greengoldenimg2.png'],
+  name:'Aurora Marble',
+  rarity:'legendary',
+  fortunes:[
+    '🌟 LEGENDARY ENERGY DETECTED.',
+    'Your next big idea is closer than you think.',
+    'The universe just bookmarked your ambitions.'
+  ]
+},
+
+{
+  ball:'greenball.png',
+  reveal:['greenballimg1.png','greenballimg2.png'],
+  name:'Emerald Marble',
+  rarity:'common',
+  fortunes:[
+    'Drink water and conquer the world.',
+    'Tiny progress still counts as progress.',
+    'Your keyboard believes in you.'
+  ]
+},
+
+{
+  ball:'maroonball.png',
+  reveal:['maroonballimg1.png','maroonballimg2.png'],
+  name:'Ruby Marble',
+  rarity:'rare',
+  fortunes:[
+    'Luck is refreshing its cache.',
+    'Someone will compliment your work soon.',
+    'Today is secretly a good day.'
+  ]
+},
+
+{
+  ball:'mix.png',
+  reveal:['miximg1.png','miximg2.png'],
+  name:'Nebula Marble',
+  rarity:'legendary',
+  fortunes:[
+    'You unlocked premium main-character vibes.',
+    'Future Soumi left a five-star review.',
+    'The plot twist ahead is a good one.'
+  ]
+},
+
+{
+  ball:'pink ball.png',
+  reveal:['pink ballimg1.png','pink ballimg2.png'],
+  name:'Candy Marble',
+  rarity:'common',
+  fortunes:[
+    'You deserve a sweet treat today.',
+    'Something adorable is headed your way.',
+    'Your smile has +10 charisma.'
+  ]
+}
+
 ];
 
 let clawX = 50; // percent across the rail
@@ -1754,29 +2086,69 @@ function closeClawGame() {
 }
 
 function initPit() {
+
   const pit = document.getElementById('sticker-pit');
+
   pit.innerHTML = '';
+
   pitStickers = [];
+
   const pitW = pit.clientWidth || 480;
   const pitH = pit.clientHeight || 280;
 
-  // Shuffle and pick 12 stickers
-  const shuffled = [...STICKERS].sort(()=>Math.random()-0.5).slice(0,12);
-  shuffled.forEach((s,i) => {
-    const el = document.createElement('div');
-    const rot = (Math.random()*40-20).toFixed(1);
-    el.className = 'pit-sticker' + (s.rarity !== 'common' ? ' rare' : '');
-    el.textContent = s.emoji;
-    el.style.setProperty('--rot', rot+'deg');
-    el.style.left = (10+Math.random()*(pitW-80))+'px';
-    el.style.top = (20+Math.random()*(pitH-80))+'px';
-    el.style.animationDelay = (Math.random()*2)+'s';
-    pit.appendChild(el);
-    pitStickers.push({el, data:s,
-      x: parseFloat(el.style.left),
-      y: parseFloat(el.style.top)
-    });
+  const doubled = [];
+
+  STICKERS.forEach(ball => {
+    doubled.push({...ball});
+    doubled.push({...ball});
   });
+
+  const shuffled = doubled.sort(() => Math.random() - 0.5);
+
+  shuffled.forEach((s) => {
+
+    const el = document.createElement('div');
+
+    const rot =
+      (Math.random() * 40 - 20).toFixed(1);
+
+    el.className =
+      'pit-sticker' +
+      (s.rarity !== 'common'
+        ? ' rare'
+        : '');
+
+    el.innerHTML = `
+      <img src="${s.ball}" class="pit-ball">
+    `;
+
+    el.style.setProperty(
+      '--rot',
+      rot + 'deg'
+    );
+
+    el.style.left =
+      (10 + Math.random() * (pitW - 80))
+      + 'px';
+
+    el.style.top =
+      (20 + Math.random() * (pitH - 80))
+      + 'px';
+
+    el.style.animationDelay =
+      (Math.random() * 2) + 's';
+
+    pit.appendChild(el);
+
+    pitStickers.push({
+      el,
+      data:s,
+      x:parseFloat(el.style.left),
+      y:parseFloat(el.style.top)
+    });
+
+  });
+
 }
 
 function resetClaw() {
@@ -1829,7 +2201,7 @@ function dropClaw() {
 
     pitStickers.forEach(s => {
       if(s.el.classList.contains('grabbed')) return;
-      const dist = Math.abs(s.x + 18 - clawPixelX);
+      const dist = Math.abs(s.x + 30 - clawPixelX);
       if(dist < minDist) { minDist = dist; closest = s; }
     });
 
@@ -1855,41 +2227,142 @@ function dropClaw() {
 // ══════════════════════════════════
 // PRIZE REVEAL
 // ══════════════════════════════════
-function showPrize(sticker) {
-  document.getElementById('prize-sticker').textContent = sticker.emoji;
-  document.getElementById('prize-name').textContent = sticker.name;
-  document.getElementById('prize-fortune').textContent = sticker.fortune;
+function showPrize(sticker){
+
+  const revealImg =
+    sticker.reveal[
+      Math.floor(
+        Math.random() *
+        sticker.reveal.length
+      )
+    ];
+
+  const fortune =
+    sticker.fortunes[
+      Math.floor(
+        Math.random() *
+        sticker.fortunes.length
+      )
+    ];
+
+  // Phase 1: show the ball that was caught
+  document.getElementById(
+    'prize-sticker'
+  ).innerHTML = `
+    <img src="${sticker.ball}" id="prize-sticker-img" style="transition:all 0.5s ease;">
+  `;
+
+  document.getElementById(
+    'prize-name'
+  ).textContent = '❓ Mystery Sticker';
+
+  // Store reveal data on the button for use in revealFortune
+  const revealBtn = document.getElementById('prize-reveal-btn');
+  revealBtn._revealImg = revealImg;
+  revealBtn._fortune = fortune;
+  revealBtn._stickerName = sticker.name;
+
+  document.getElementById('prize-fortune').textContent = fortune;
   document.getElementById('prize-fortune').classList.remove('revealed');
 
-  const rarEl = document.getElementById('prize-rarity');
-  rarEl.textContent = sticker.rarity.charAt(0).toUpperCase()+sticker.rarity.slice(1);
-  rarEl.className = 'prize-rarity '+sticker.rarity;
+  const rarEl =
+    document.getElementById(
+      'prize-rarity'
+    );
 
-  document.getElementById('prize-reveal-btn').style.display = 'block';
-  document.getElementById('prize-back-btn').style.display = 'none';
+  rarEl.textContent =
+    sticker.rarity.charAt(0).toUpperCase() +
+    sticker.rarity.slice(1);
 
-  // Generate stars
-  const starsEl = document.getElementById('stars-bg');
-  starsEl.innerHTML = '';
-  for(let i=0;i<20;i++){
-    const s = document.createElement('div');
-    s.className='star';
-    s.style.cssText=`left:${Math.random()*100}%;top:${Math.random()*100}%;width:${1+Math.random()*2}px;height:${1+Math.random()*2}px;animation-delay:${Math.random()*2}s;animation-duration:${1+Math.random()*2}s`;
-    starsEl.appendChild(s);
+  rarEl.className =
+    'prize-rarity ' +
+    sticker.rarity;
+
+  rarEl.style.visibility = 'hidden'; // hide until revealed
+
+  // Store rarity on button too
+  revealBtn._rarEl = rarEl;
+
+  const oldBanner =
+    document.querySelector(
+      '.legendary-banner'
+    );
+
+  if(oldBanner) oldBanner.remove();
+
+  if(sticker.rarity === 'legendary'){
+
+    const banner =
+      document.createElement('div');
+
+    banner.className =
+      'legendary-banner';
+
+    banner.innerHTML =
+      '🌟 LEGENDARY FIND 🌟';
+
+    banner.style.display = 'none'; // hide until revealed
+    revealBtn._legendaryBanner = banner;
+
+    document
+      .querySelector('.prize-card')
+      .appendChild(banner);
+
+  } else {
+    revealBtn._legendaryBanner = null;
   }
-  const starStyle = document.createElement('style');
-  starStyle.textContent = '@keyframes star-twinkle{0%,100%{opacity:0}50%{opacity:0.7}}';
-  document.head.appendChild(starStyle);
 
-  document.getElementById('prize-overlay').classList.add('active');
-  document.body.style.overflow = 'hidden';
-  addPoints(10, '🎁 Sticker collected: '+sticker.name);
+  document.getElementById(
+    'prize-reveal-btn'
+  ).style.display = 'block';
+
+  document.getElementById(
+    'prize-back-btn'
+  ).style.display = 'none';
+
+  document.getElementById(
+    'prize-overlay'
+  ).classList.add('active');
+
+  document.body.style.overflow =
+    'hidden';
+
+  addPoints(
+    10,
+    '🎁 Sticker collected: ' +
+    sticker.name
+  );
 }
 
 function revealFortune() {
+  const revealBtn = document.getElementById('prize-reveal-btn');
+
+  // Swap ball image → sticker reveal image
+  const img = document.getElementById('prize-sticker-img');
+  if(img) {
+    img.style.opacity = '0';
+    img.style.transform = 'scale(0.7) rotate(-10deg)';
+    setTimeout(() => {
+      img.src = revealBtn._revealImg;
+      img.style.opacity = '1';
+      img.style.transform = 'scale(1) rotate(0deg)';
+    }, 300);
+  }
+
+  // Reveal the sticker name
+  document.getElementById('prize-name').textContent = revealBtn._stickerName;
+
+  // Show rarity badge
+  if(revealBtn._rarEl) revealBtn._rarEl.style.visibility = 'visible';
+
+  // Show legendary banner if applicable
+  if(revealBtn._legendaryBanner) revealBtn._legendaryBanner.style.display = '';
+
+  // Reveal the fortune
   document.getElementById('prize-fortune').classList.add('revealed');
-  document.getElementById('prize-reveal-btn').style.display = 'none';
+  revealBtn.style.display = 'none';
   document.getElementById('prize-back-btn').style.display = 'block';
+
   // Confetti burst
   for(let i=0;i<8;i++){
     setTimeout(()=>{
@@ -1908,7 +2381,9 @@ function closePrize() {
   document.body.style.overflow = '';
 }
 
-
+setTimeout(() => {
+  document.getElementById("sticker-tip").classList.add("hide");
+}, 6000);
 
 // ══════════════════════════════════
 // EASTER EGGS
