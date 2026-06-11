@@ -6,7 +6,7 @@
 
 Explore my projects, skills, and journey through a portfolio filled with hidden easter eggs, collectible explorer points, and interactive experiences.
 
-[Live Demo](#) • [Resume](./soumyamishraresume_.pdf)
+[Live Demo](https://soumi27.github.io/) • [Resume](./soumyamishraresume_.pdf)
 
 </div>
 
