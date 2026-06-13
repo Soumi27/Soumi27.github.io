@@ -1813,6 +1813,10 @@ function showSecretCat() {
   const line1El = document.getElementById('sco-line1');
   const line2El = document.getElementById('sco-line2');
 
+  // Cancel any in-progress typing or dismiss timers
+  clearTimeout(window._scTimer);
+  clearTimeout(window._scTypeTimer);
+
   // Reset text
   line1El.textContent = '';
   line2El.textContent = '';
@@ -1833,7 +1837,7 @@ function showSecretCat() {
   function typeL1() {
     if (i < msg1.length) {
       line1El.textContent += msg1[i++];
-      setTimeout(typeL1, 42);
+      window._scTypeTimer = setTimeout(typeL1, 42);
     } else {
       // Start line 2
       line2El.style.opacity = '1';
@@ -1841,16 +1845,15 @@ function showSecretCat() {
       function typeL2() {
         if (j < msg2.length) {
           line2El.textContent += msg2[j++];
-          setTimeout(typeL2, 48);
+          window._scTypeTimer = setTimeout(typeL2, 48);
         }
       }
-      setTimeout(typeL2, 300);
+      window._scTypeTimer = setTimeout(typeL2, 300);
     }
   }
-  setTimeout(typeL1, 700);
+  window._scTypeTimer = setTimeout(typeL1, 700);
 
   // Auto dismiss after 6s
-  clearTimeout(window._scTimer);
   window._scTimer = setTimeout(() => {
     overlay.classList.remove('sco-visible');
     setTimeout(() => { overlay.style.display = 'none'; }, 700);
@@ -2363,9 +2366,6 @@ function revealFortune() {
   revealBtn.style.display = 'none';
   document.getElementById('prize-back-btn').style.display = 'block';
 
-  // Sticker burst — all types launch simultaneously after 120ms
-  burstAllStickers();
-
   // Confetti burst
   for(let i=0;i<8;i++){
     setTimeout(()=>{
@@ -2377,67 +2377,6 @@ function revealFortune() {
       setTimeout(()=>confetti.remove(),1100);
     },i*80);
   }
-}
-
-function burstAllStickers() {
-  // Inject keyframe if not already present
-  if(!document.getElementById('sticker-burst-style')) {
-    const s = document.createElement('style');
-    s.id = 'sticker-burst-style';
-    s.textContent = `
-      @keyframes stickerBurst {
-        0%   { opacity: 1; transform: translate(0,0) scale(1) rotate(0deg); }
-        70%  { opacity: 1; }
-        100% { opacity: 0; transform: translate(var(--bx), var(--by)) scale(0.35) rotate(var(--br)); }
-      }
-    `;
-    document.head.appendChild(s);
-  }
-
-  // Origin: centre of screen
-  const ox = window.innerWidth / 2;
-  const oy = window.innerHeight / 2;
-
-  // All 6 ball images from STICKERS array
-  const ballImgs = STICKERS.map(s => s.ball);
-
-  // Launch every sticker at the same moment (tiny shared delay: 120ms)
-  const DELAY = 120;
-
-  ballImgs.forEach((src, idx) => {
-    // Spread evenly in a circle + a little random jitter
-    const baseAngle = (idx / ballImgs.length) * Math.PI * 2;
-    const angle = baseAngle + (Math.random() - 0.5) * 0.6;
-    const dist = 220 + Math.random() * 140;
-    const bx = Math.cos(angle) * dist;
-    const by = Math.sin(angle) * dist;
-    const br = (Math.random() * 540 - 270).toFixed(0) + 'deg';
-
-    setTimeout(() => {
-      const el = document.createElement('img');
-      el.src = src;
-      el.style.cssText = `
-        position: fixed;
-        left: ${ox}px;
-        top: ${oy}px;
-        width: 64px;
-        height: 64px;
-        object-fit: contain;
-        pointer-events: none;
-        z-index: 10003;
-        transform-origin: center;
-        filter: drop-shadow(0 4px 12px rgba(0,0,0,.45));
-        --bx: ${bx}px;
-        --by: ${by}px;
-        --br: ${br};
-        animation: stickerBurst 0.85s cubic-bezier(.22,.68,0,1.2) forwards;
-        margin-left: -32px;
-        margin-top: -32px;
-      `;
-      document.body.appendChild(el);
-      setTimeout(() => el.remove(), 950);
-    }, DELAY);
-  });
 }
 
 function closePrize() {
